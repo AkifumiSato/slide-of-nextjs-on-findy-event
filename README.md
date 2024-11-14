@@ -1,11 +1,10 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Slide of Next.js Event on Findy
 
-To start the slide show:
+## Slide
 
-- `npm install`
-- `npm run dev`
-- visit <http://localhost:3030>
+- [slides.md](slides.md)
+- [github pages](https://akifumisato.github.io/slide-of-nextjs-on-findy-event/1)
 
-Edit the [slides.md](./slides.md) to see the changes.
+## Event
 
-Learn more about Slidev at the [documentation](https://sli.dev/).
+TBW
