@@ -15,24 +15,22 @@ transition: slide-left
 mdc: true
 ---
 
-# 「Next.jsの考え方」と<br>「Next.jsのこれから」
+# 「Next.jsの考え方」<br>「Next.jsのこれから」
 
 これまでの考え方、これからの考え方
 
 ---
 
-# akfm's Profile
+# Profile
 
-佐藤 昭文、[akfm_sato](https://x.com/akfm_sato)、あっきー
-
-- Interest
+- About
+  - [akfm_sato(あっきー)](https://x.com/akfm_sato)
   - Next.js
   - Rust
   - テスト設計
   - アジャイル
 - Activity
   - https://zenn.dev/akfm
-    - [Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle)
   - [Offers - Next.js v15 アップデート解説イベント](https://offers-jp.connpass.com/event/328878/)
   - [JS Conf 2023](https://main--remarkable-figolla-a694f0.netlify.app/1)
   - [Rust入門本の執筆](https://www.shuwasystem.co.jp/book/9784798067315.html)
@@ -44,7 +42,7 @@ mdc: true
 
 本日の流れ
 
-1. Next.js（App Router）にすべきかどうか
+1. App Routerを採用すべきかどうか
 2. 「Next.jsの考え方」の要点
 3. QA
 4. Next.jsのこれから
@@ -53,7 +51,7 @@ mdc: true
 layout: section
 ---
 
-# Next.js（App Router）<br>にすべきかどうか
+# App Routerを<br>採用すべきかどうか
 
 ---
 
@@ -61,31 +59,59 @@ layout: section
 
 個人の主観に基づく見解だが、日本においてはこういう状況に思える
 
-- Pages Routerを使ってる人は一定以上いる
-- App Routerに...
+- Pages Router
+  - 使ってる人は一定以上いる
+- App Router
   - 興味がある人も一定以上いる
   - 仕事で使ってる人は少ない
   - ついていけない人も多い
   - 思想が受け入れられない人も一定数いる
-- よく大きな変化があるからついていくのが大変
+- Next.js自体、変化が激しいのでついていくのが大変
+
+---
+transition: fade
+---
+
+# Q. App Routerを採用すべきかどうか
+
+「App Routerにすべきですか？」「App Router触っといた方がいいですか？」
+
+- 結論: 状況によりけり
+  - <span v-mark="{ at: 1, color: 'red', type: 'underline'}">プロダクト特性やチームのスキルセットなど様々な要因を鑑みないとなんとも言えない</span>
+    - 多分全ての技術選定に言えること
+  - パフォーマンスや開発効率の向上は期待できる
+  - 学習コストは求められる理解度は高め
 
 ---
 
-# Q. Next.js（App Router）にすべきかどうか？
+# Q. App Routerを採用すべきかどうか
 
-筆者の周りでもよく聞く疑問に対する個人的な見解
+「App Routerにすべきですか？」「App Router触っといた方がいいですか？」
 
-- 結論: 状況によりけり
-  - プロダクト特性やチームのスキルセットなど様々な要因を鑑みないとなんとも言えない
-- 意見1: 移行するメリットはある
-  - Pages Routerが削除される可能性は少ないが、廃れていくのは間違いない
-  - パフォーマンスや開発効率の向上は大きく期待できる
-  - 学習コストが低いとは言えない
-  - バグや困難な問題はそれなりに起きえる
-- 意見2: 勉強して損になりにくい
+- <span v-mark="{ at: 1, color: 'red', type: 'underline'}">おすすめ: App Routerを学んでおくことはそれなりに価値がある</span>
+  - 必要になってから学び始めると大変
+  - Next.jsは今日時点で最も大きな影響力を持つフレームワークと考えられる
   - RSCの知識は無駄にはなりにくい
-  - 未だ非常に大きな勢力を持ったフレームワークである
+  - Pages Routerが削除される可能性は少ないが、廃れていくのは間違いない
+
+---
+layout: fact
+---
+
+## 「採用すべき」🤔<br>「学ぶべき」✅
+
+---
+layout: section
+---
+
+# 「Next.jsの考え方」の要点
 
 ---
 
 TBW
+
+- データフェッチ on Server Components
+- Streamingの活用
+- データフェッチ コロケーション
+- Server Actionsを利用したデータ操作
+- Static Rendering・Dynamic Rendering・PPR
