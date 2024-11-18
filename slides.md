@@ -17,8 +17,6 @@ mdc: true
 
 # 「Next.jsの考え方」<br>「Next.jsのこれから」
 
-これまでの考え方、これからの考え方
-
 ---
 
 # Profile
@@ -53,6 +51,8 @@ layout: section
 
 # App Routerを<br>採用すべきかどうか
 
+まずApp Router採用に対する、個人の見解をお話しします。
+
 ---
 
 # 日本におけるNext.jsの現状
@@ -78,7 +78,7 @@ transition: fade
 
 - 結論: 状況によりけり
   - <span v-mark="{ at: 1, color: 'red', type: 'underline'}">プロダクト特性やチームのスキルセットなど様々な要因を鑑みないとなんとも言えない</span>
-    - 多分全ての技術選定に言えること
+    - ※多分全ての技術選定に言えること
   - パフォーマンスや開発効率の向上は期待できる
   - 学習コストは求められる理解度は高め
 
@@ -95,23 +95,163 @@ transition: fade
   - Pages Routerが削除される可能性は少ないが、廃れていくのは間違いない
 
 ---
-layout: fact
----
-
-## 「採用すべき」🤔<br>「学ぶべき」✅
-
----
 layout: section
 ---
 
 # 「Next.jsの考え方」の要点
 
+[Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle)の内容を一部抜粋して紹介します。
+
+---
+
+# 「Next.jsの考え方」の要点
+
+より詳しくは、ぜひ[Zenn](https://zenn.dev/akfm/books/nextjs-basic-principle)を参照ください。
+
+- データフェッチ on Server Components
+- データフェッチ コロケーション
+- Streamingの活用
+- Server Actionsを利用したデータ操作
+- Static Rendering・Dynamic Rendering・PPR
+
+---
+transition: fade
+---
+
+# データフェッチ on Server Components
+
+データフェッチはClient Componentsではなく、Server Componentsで行いましょう。
+
+- Reactが従来抱えていた問題の本質は「Reactがサーバーを活用できていないこと」であるとし、再設計されたアーキテクチャが**React Server Components**である
+  - React Server Components≠Server Components
+- Server Componentsでデータフェッチを行うことで、様々なメリットを享受できる
+  - 高速なバックエンドアクセス
+  - シンプルでセキュアな実装
+  - バンドルサイズの軽減
+
+---
+
+# データフェッチ on Server Components
+
+データフェッチはClient Componentsではなく、Server Componentsで行いましょう。
+
+```tsx {all|2,3}
+export async function ProductCard({ id }: { id: string }) {
+  const res = await fetch(`https://dummyjson.com/products/${id}`);
+  const product: Product = await res.json();
+
+  return (
+    <div className={/* ... */}>
+      <h2>{product.title}</h2>
+      {/* ... */}
+    </div>
+  );
+}
+```
+
+---
+transition: fade
+---
+
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+- コロケーションとは？
+  - > コードをできるだけ関連性のある場所に配置することを指します。
+- データフェッチ コロケーションとは？
+  - データフェッチ処理をデータを参照するコンポーネントやその近くで行うこと
+  - Props Drilling（バケツリレー）の逆
+- データフェッチの管理が破綻しない？
+  - Metaの大規模プロダクトにおいても従来より、GraphQLコロケーションを用いたデータフェッチコロケーションが採用されてきた
+  - `fetch()`においても破綻しないよう、Next.jsではRequest Memoizationを提供してる
+
+---
+
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+```tsx {all|2-6|13,14}
+// 従来
+export const getServerSideProps = (async () => {
+  const res = await fetch("https://dummyjson.com/products/1");
+  const product = await res.json();
+  return { props: { product } };
+}) satisfies GetServerSideProps<ProductProps>;
+
+export default function ProductPage({
+  product,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <Layout>
+      {/* 🚨Props Drilling🚨 */}
+      <Product product={product} />
+    </Layout>
+  );
+}
+```
+
+---
+transition: fade
+---
+
+# Streamingの活用
+
+特に重いコンポーネントのレンダリングは`<Suspense>`で遅延させて、Streaming SSRにしましょう。
+
+- 重いデータフェッチを伴う場合、該当部分だけClient fetchにするようなパターンが過去よく見られた
+  - Zennなどもまさにそう
+- App Routerは**Streaming SSR**に対応しているので、`<Suspense>`で該当箇所をStreamingにすることが可能
+
+---
+transition: fade
+---
+
+# Streamingの活用
+
+特に重いコンポーネントのレンダリングは`<Suspense>`で遅延させて、Streaming SSRにしましょう。
+
+```tsx {all|13-17|6-8}
+export default function Page() {
+  return (
+    <div>
+      <h1>Streaming SSR</h1>
+      <Clock />
+      <Suspense fallback={<>loading...</>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function LazyComponent() {
+  await setTimeout(3000);
+
+  return <p>Lazy Component</p>;
+}
+```
+
+---
+
+# Streamingの活用
+
+特に重いコンポーネントのレンダリングは`<Suspense>`で遅延させて、Streaming SSRにしましょう。
+
+<div class="flex space-x-10 my-10">
+  <img src="https://res.cloudinary.com/zenn/image/fetch/s--v5QQf4Qh--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/e63dff72f053c2611819e2a5.png%3Fsha%3D98adb18104055ba50cc5a09179cd40c5f98910d3" class="w-100">
+  <img src="https://res.cloudinary.com/zenn/image/fetch/s--ATF7qLgU--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/4ee185577400d6aedfd8cc44.png%3Fsha%3D4578cf7ff142113f571d5641d52159f6da41b786" class="w-100">
+</div>
+
+---
+
+# Server Actionsを利用したデータ操作
+
+TBW
+
 ---
 
 TBW
 
-- データフェッチ on Server Components
-- Streamingの活用
-- データフェッチ コロケーション
 - Server Actionsを利用したデータ操作
 - Static Rendering・Dynamic Rendering・PPR
