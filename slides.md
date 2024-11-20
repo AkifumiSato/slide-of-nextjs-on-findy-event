@@ -23,16 +23,13 @@ mdc: true
 
 - About
   - [akfm_sato(あっきー)](https://x.com/akfm_sato)
+- Interest
   - Next.js
-  - Rust
   - テスト設計
   - アジャイル
+  - Rust
 - Activity
   - https://zenn.dev/akfm
-  - [Offers - Next.js v15 アップデート解説イベント](https://offers-jp.connpass.com/event/328878/)
-  - [JS Conf 2023](https://main--remarkable-figolla-a694f0.netlify.app/1)
-  - [Rust入門本の執筆](https://www.shuwasystem.co.jp/book/9784798067315.html)
-  - etc...
 
 ---
 
@@ -50,7 +47,7 @@ layout: section
 
 # App Routerを<br>採用すべきかどうか
 
-まずApp Router採用に対する、個人の見解をお話しします。
+App Router採用に対する、個人の見解
 
 ---
 
@@ -64,7 +61,7 @@ layout: section
   - 興味がある人も一定以上いる
   - 仕事で使ってる人は少ない
   - ついていけない人も多い
-  - 思想が受け入れられない人も一定数いる
+  - ある程度理解した上で合わないという人もいる
 - Next.js自体、変化が激しいのでついていくのが大変
 
 ---
@@ -75,23 +72,20 @@ transition: fade
 
 「App Routerにすべきですか？」「App Router触っといた方がいいですか？」
 
-- 結論: 状況によりけり
-  - <span v-mark="{ at: 1, color: 'red', type: 'underline'}">プロダクト特性やチームのスキルセットなど様々な要因を鑑みないとなんとも言えない</span>
-    - ※多分全ての技術選定に言えること
+- 結論: **状況によりけり**
+  - プロダクト特性やチームのスキルセットなど様々な要因を鑑みないとなんとも言えない
   - パフォーマンスや開発効率の向上は期待できる
-  - 学習コストは求められる理解度は高め
+  - 容易に始められるが、ハマると高い学習コストがかかる
 
----
+<div v-click>
 
-# Q. App Routerを採用すべきかどうか
-
-「App Routerにすべきですか？」「App Router触っといた方がいいですか？」
-
-- <span v-mark="{ at: 1, color: 'red', type: 'underline'}">おすすめ: App Routerを学んでおくことはそれなりに価値がある</span>
+- 意見: **App Routerを学んでおくことはそれなりに価値がある**
   - 必要になってから学び始めると大変
   - Next.jsは今日時点で最も大きな影響力を持つフレームワークと考えられる
   - RSCの知識は無駄にはなりにくい
   - Pages Routerが削除される可能性は少ないが、廃れていくのは間違いない
+
+</div>
 
 ---
 layout: section
@@ -99,7 +93,7 @@ layout: section
 
 # 「Next.jsの考え方」の要点
 
-[Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle)の内容を一部抜粋して紹介します。
+[Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle)の内容を一部抜粋して紹介
 
 ---
 
@@ -111,7 +105,7 @@ layout: section
 - データフェッチ コロケーション
 - Streamingの活用
 - Server Actionsを利用したデータ操作
-- Static Rendering・Dynamic Rendering・PPR
+- Static Rendering・Dynamic Rendering
 
 ---
 transition: fade
@@ -158,13 +152,24 @@ transition: fade
 
 - コロケーションとは？
   - > コードをできるだけ関連性のある場所に配置することを指します。
+
+<div v-click>
+
 - データフェッチ コロケーションとは？
   - データフェッチ処理をデータを参照するコンポーネントやその近くで行うこと
-  - Props Drilling（バケツリレー）の逆
+  - Props Drilling（バケツリレー）やめて末端でデータフェッチしましょう、ということ
+
+</div>
+<div v-click>
+
 - データフェッチの管理が破綻しない？
   - Metaの大規模プロダクトにおいても従来より、GraphQLコロケーションを用いたデータフェッチコロケーションが採用されてきた
   - `fetch()`においても破綻しないよう、Next.jsではRequest Memoizationを提供してる
 
+</div>
+
+---
+transition: fade
 ---
 
 # データフェッチ コロケーション
@@ -187,6 +192,35 @@ export default function ProductPage({
       {/* 🚨Props Drilling🚨 */}
       <Product product={product} />
     </Layout>
+  );
+}
+```
+
+---
+
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+```tsx {all|2-8|10-12}
+// RSC時代
+export default function ProductPage() {
+  return (
+    <Layout>
+      <Product id="1" />
+    </Layout>
+  );
+}
+
+async function Product({ id }: { id: string }) {
+  const res = await fetch(`https://dummyjson.com/products/${id}`);
+  const product = (await res.json()) as Product;
+
+  return (
+    <div className={/* ... */}>
+      <h2>{product.title}</h2>
+      {/* ... */}
+    </div>
   );
 }
 ```
@@ -255,6 +289,8 @@ transition: fade
   - App Routerにおいては、キャッシュ操作の役割も担っている
 
 ---
+transition: fade
+---
 
 # Server Actionsを利用したデータ操作
 
@@ -271,8 +307,6 @@ export async function createTodo(formData: FormData) {
 }
 ```
 
----
-transition: fade
 ---
 
 # Server Actionsを利用したデータ操作
@@ -391,7 +425,7 @@ layout: section
 
 # 「Next.jsのこれから」
 
-PPRやdynamicIOなど最新のNext.jsの動向についてお話しします。
+PPRやdynamicIOなど最新のNext.jsの動向について
 
 ---
 
@@ -408,7 +442,7 @@ transition: fade
 
 # PPR（Partial-Pre Rendering）
 
-2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
+2023年のNext Confで発表された新たなレンダリングモデル
 
 - 従来、ページ単位でStatic RenderingとDynamic Renderingは選択されていた
 - PPRでは、デフォルトはStatic Renderingだが**部分的にDynamic Renderingにすることができる**
@@ -423,7 +457,7 @@ transition: fade
 
 # PPR（Partial-Pre Rendering）
 
-2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
+2023年のNext Confで発表された新たなレンダリングモデル
 
 ```tsx {all|5-7}
 export default function Page() {
@@ -442,7 +476,7 @@ export default function Page() {
 
 # PPR（Partial-Pre Rendering）
 
-2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
+2023年のNext Confで発表された、新たなレンダリングモデル
 
 <div class="flex space-x-10 my-10">
   <img src="https://res.cloudinary.com/zenn/image/fetch/s--2PGgEyqj--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/978ace959257180f2efac0fe.png%3Fsha%3Dbd99556d92d0b9d182be85899bb4f57e32b1828c" class="w-100">
@@ -453,7 +487,7 @@ export default function Page() {
 transition: fade
 ---
 
-# App Routerのキャッシュについての不評
+# dynamicIOの前に: 不評だったキャッシュについて
 
 従来、App Routerではキャッシュ周りについて多くの混乱が見られた
 
@@ -545,15 +579,20 @@ async function getNotice() {
 
 ---
 
-# まとめ
+# 「Next.jsのこれから」まとめ
 
-TBW
+Next.jsは今後、よりシンプルな設計へと進化してく
+
+- PPR: ページ単位で考慮するのではなく、境界単位で考える世界観に
+- dynamicIO: キャッシュのデフォルトや適用方法が大幅に刷新し、よりシンプルな設計へ
 
 ---
 
 # 付録: Next.jsへの不満
 
-- Versioningに対する品質が残念
+時間があった時用
+
+- patchアップデートで新機能が入ったり壊れたり、アップデートに対する信頼度が低い
 - issueやPR見てくれない
 - RSCに対するエコシステムが未成熟
   - RTLがSCサポートしてない
