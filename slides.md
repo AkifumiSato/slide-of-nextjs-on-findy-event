@@ -307,7 +307,7 @@ transition: fade
 | [Static Rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default) | build時やrevalidate後 | SSG・ISR相当         |
 | [Dynamic Rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering)       | ユーザーリクエスト時  | SSR相当              |
 
-App Routerは<span v-mark="{ at: 1, color: 'red', type: 'underline'}">基本がStatic Rendering、特定の関数や設定を含むことでDynamic Rendering</span>となっています。
+App Routerは<span v-mark="{ at: 1, color: 'red', type: 'underline'}">デフォルトがStatic Rendering、特定の関数や設定を含むことでDynamic Rendering</span>となっています。
 
 ---
 transition: fade
@@ -411,7 +411,7 @@ transition: fade
 2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
 
 - 従来、ページ単位でStatic RenderingとDynamic Renderingは選択されていた
-- PPRでは、**基本はStatic Renderingとしつつ部分的にDynamic Rendering**にすることができる
+- PPRでは、デフォルトはStatic Renderingだが**部分的にDynamic Renderingにすることができる**
 
 <div class="flex justify-center my-10">
   <img src="https://res.cloudinary.com/zenn/image/fetch/s--tbcuP5e3--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/6cc068f618fb070762011646.png%3Fsha%3D6d91c621f46a19fe589f47c84ea5199fdb0a7da2" class="h-70">
@@ -419,17 +419,6 @@ transition: fade
 
 ---
 transition: fade
----
-
-# PPR（Partial-Pre Rendering）
-
-2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
-
-<div class="flex space-x-10 my-10">
-  <img src="https://res.cloudinary.com/zenn/image/fetch/s--2PGgEyqj--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/978ace959257180f2efac0fe.png%3Fsha%3Dbd99556d92d0b9d182be85899bb4f57e32b1828c" class="w-100">
-  <img src="https://res.cloudinary.com/zenn/image/fetch/s--NxRy_1Ox--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/0a8f8fe2399f4776965fce2f.png%3Fsha%3D1c264decef63505ebe6fc5911a59d9fdbddbb901" class="w-100">
-</div>
-
 ---
 
 # PPR（Partial-Pre Rendering）
@@ -451,20 +440,122 @@ export default function Page() {
 
 ---
 
+# PPR（Partial-Pre Rendering）
+
+2023年のNext Confで発表された、乱立するレンダリングの形を1つにまとめたもの
+
+<div class="flex space-x-10 my-10">
+  <img src="https://res.cloudinary.com/zenn/image/fetch/s--2PGgEyqj--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/978ace959257180f2efac0fe.png%3Fsha%3Dbd99556d92d0b9d182be85899bb4f57e32b1828c" class="w-100">
+  <img src="https://res.cloudinary.com/zenn/image/fetch/s--NxRy_1Ox--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_1200/https://storage.googleapis.com/zenn-user-upload/deployed-images/0a8f8fe2399f4776965fce2f.png%3Fsha%3D1c264decef63505ebe6fc5911a59d9fdbddbb901" class="w-100">
+</div>
+
+---
+transition: fade
+---
+
+# App Routerのキャッシュについての不評
+
+従来、App Routerではキャッシュ周りについて多くの混乱が見られた
+
+- デフォルトだと`fetch()`がbuild時に実行されるのがわかりづらい
+- `next dev`と`next build`の混乱
+- デフォルトのキャッシュを強く意識しないといけない
+- キャッシュの階層が多い
+- キャッシュ周りのAPIや関連する挙動など、学習コストが高い
+- 細かい制御がしづらい、できない
+- etc...
+
+---
+transition: fade
+---
+
 # dynamicIO
 
 2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
+
+- キャッシュのデフォルトや適用方法が大幅に一新
+  - キャッシュしたいファイルや関数には`"use cache";`、境界を設けたい時には`<Suspense>`
+  - 「デフォルトでキャッシュ」 -> 「キャッシュはOpt in」に変更
+  - よりキャッシュの境界が自由に、シンプルになる
+
+<span v-mark="{ at: 1, color: 'red', type: 'underline'}">App Router最大のネガとも言えるキャッシュを大きく方向転換</span>
+
+---
+transition: fade
+---
+
+# dynamicIO
+
+2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
+
+```tsx {all|1}
+"use cache";
+
+export default async function Layout({ children }) {
+  const response = await fetch("...");
+  const data = await response.json();
+
+  return (
+    <html>
+      <body>
+        <div>{data.notice}</div>
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+---
+transition: fade
+---
+
+# dynamicIO
+
+2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
+
+```tsx {all|4-6}
+// `"use cache";`内で境界が必要になったら`<Suspense>`
+export default async function Page() {
+  return (
+    <Suspense fallback="...">
+      <Component />
+    </Suspense>
+  );
+}
+```
+
+---
+transition: fade
+---
+
+# dynamicIO
+
+2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
+
+```tsx {all|2}
+async function getNotice() {
+  "use cache";
+
+  const response = await fetch("...");
+  const data = await response.json();
+  return data.notice;
+}
+```
+
+---
+
+# まとめ
 
 TBW
 
 ---
 
-TBW
+# 付録: Next.jsへの不満
 
-- 付録: Next.jsへの不満
-  - Versioningに対する品質が残念
-  - issueやPR見てくれない
-  - RSCに対するエコシステムが未成熟
-    - RTLがSCサポートしてない
-    - StorybookのSCサポートが雑
-  - セルフホスティングの難易度高すぎる
+- Versioningに対する品質が残念
+- issueやPR見てくれない
+- RSCに対するエコシステムが未成熟
+  - RTLがSCサポートしてない
+  - StorybookのSCサポートが雑
+- セルフホスティングの難易度高すぎる
