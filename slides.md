@@ -523,6 +523,7 @@ transition: fade
 2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
 
 ```tsx {all|1}
+// LayoutやPage単位でStaticにしたい場合はファイルの先頭に`"use cache"`
 "use cache";
 
 export default async function Layout({ children }) {
@@ -549,11 +550,11 @@ transition: fade
 2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
 
 ```tsx {all|4-6}
-// `"use cache";`内で境界が必要になったら`<Suspense>`
+// 動的にデータフェッチを扱いたい場合は`<Suspense>`境界内に配置
 export default async function Page() {
   return (
     <Suspense fallback="...">
-      <Component />
+      <DynamicComponent />
     </Suspense>
   );
 }
@@ -568,6 +569,7 @@ transition: fade
 2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
 
 ```tsx {all|2}
+// 関数やコンポーネント単位でキャッシュも可能
 async function getNotice() {
   "use cache";
 
@@ -590,11 +592,11 @@ Next.jsは今後、よりシンプルな設計へと進化してく
 
 # 付録: Next.jsへの不満
 
-時間があった時用
+個人的に感じているNext.jsへの不満
 
 - patchアップデートで新機能が入ったり壊れたり、アップデートに対する信頼度が低い
 - issueやPR見てくれない
-- RSCに対するエコシステムが未成熟
+- RSCに対するエコシステムがまだ未成熟
   - RTLがSCサポートしてない
   - StorybookのSCサポートが雑
 - セルフホスティングの難易度高すぎる
