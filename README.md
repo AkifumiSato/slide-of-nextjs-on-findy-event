@@ -7,4 +7,4 @@
 
 ## Event
 
-TBW
+https://findy.connpass.com/event/337800/
