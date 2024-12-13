@@ -160,13 +160,26 @@ transition: fade
   - Props Drilling（バケツリレー）やめて末端でデータフェッチしましょう、ということ
 
 </div>
-<div v-click>
 
-- データフェッチの管理が破綻しない？
-  - Metaの大規模プロダクトにおいても従来より、GraphQLコロケーションを用いたデータフェッチコロケーションが採用されてきた
-  - `fetch()`においても破綻しないよう、Next.jsではRequest Memoizationを提供してる
+---
+transition: fade
+---
 
-</div>
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+![React with SSR](/ssr.png)
+
+---
+transition: fade
+---
+
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+![RSC with SSR](/rsc-ssr.png)
 
 ---
 transition: fade
@@ -224,6 +237,17 @@ async function Product({ id }: { id: string }) {
   );
 }
 ```
+
+---
+
+# データフェッチ コロケーション
+
+データフェッチはデータを参照するコンポーネントにコロケーションし、コンポーネントの独立性を高めましょう。
+
+- データフェッチの管理が破綻しない？
+  - Metaの大規模プロダクトにおいても従来より、GraphQLコロケーションを用いたデータフェッチコロケーションが採用されてきた
+  - `fetch()`においても破綻しないよう、Next.jsではRequest Memoizationを提供してる
+  - 中央集権（Pages Router）と自立分散（App Router）どちらが良いと思ってるか次第で意見が分かれる
 
 ---
 transition: fade
