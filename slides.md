@@ -202,6 +202,7 @@ export default function ProductPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
+      {/* ... */}
       {/* 🚨Props Drilling🚨 */}
       <Product product={product} />
     </Layout>
@@ -219,9 +220,10 @@ export default function ProductPage({
 // RSC時代
 export default function ProductPage() {
   return (
-    <Layout>
+    <>
+      {/* ... */}
       <Product id="1" />
-    </Layout>
+    </>
   );
 }
 
@@ -546,7 +548,7 @@ transition: fade
 
 2024年のNext Confで発表された、Static 1stからDynamic 1stへの転換を目指すコンセプト
 
-```tsx {all|1}
+```tsx {all|2}
 // LayoutやPage単位でStaticにしたい場合はファイルの先頭に`"use cache"`
 "use cache";
 
